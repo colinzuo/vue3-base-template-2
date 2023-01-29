@@ -14,3 +14,9 @@ npm init vue@latest
 √ Add ESLint for code quality? ... Yes
 √ Add Prettier for code formatting? ... No
 ```
+
+## 使用Volar的Take Over模式
+
+- 删掉对应Readme描述
+- 删掉`.vscode/extensions.json`中的recommendation
+
