@@ -56,3 +56,29 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 ```bash
 npm install axios
 ```
+
+## 添加.editorconfig
+
+<https://raw.githubusercontent.com/PanJiaChen/vue-element-admin/master/.editorconfig>
+
+- `indent_size = 2`
+
+## 添加sass
+
+<https://vitejs.dev/guide/features.html#css-pre-processors>
+
+<https://sass-lang.com/documentation/style-rules>
+
+```bash
+npm add -D sass
+```
+
+```css title="src\styles\index.scss"
+.alert, .warning {
+  ul, p {
+    margin-right: 0;
+    margin-left: 0;
+    padding-bottom: 0;
+  }
+}
+```

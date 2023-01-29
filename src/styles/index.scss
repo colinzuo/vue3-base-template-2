@@ -1,4 +1,4 @@
-@import './base.css';
+@use './base.scss' as *;
 
 #app {
   max-width: 1280px;
@@ -6,6 +6,14 @@
   padding: 2rem;
 
   font-weight: normal;
+}
+
+.alert, .warning {
+  ul, p {
+    margin-right: 0;
+    margin-left: 0;
+    padding-bottom: 0;
+  }
 }
 
 a,
