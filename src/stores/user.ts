@@ -9,19 +9,21 @@ export interface UserState {
   name?: string;
   roles?: string[];
   token?: string;
-  expireAt?: number;
+  expireAt?: string;
 }
 
 export const useUserStore = defineStore('user', () => {
   const name = ref('anonymous');
   const roles = ref([] as string[]);
   const token = ref('');
-  const expireAt = ref(-1);
+  const expireAt = ref('');
 
   const state: UserState = gStorageService.getItem(userStateKey);
 
   if (state) {
-    if (state.expireAt == null || Date.now() > state.expireAt) {
+    const expireAtParsed = Date.parse(state.expireAt || '');
+
+    if (isNaN(expireAtParsed) || Date.now() > expireAtParsed) {
       gStorageService.removeItem(userStateKey);
     } else {
       state.name != null && (name.value = state.name);
@@ -43,6 +45,10 @@ export const useUserStore = defineStore('user', () => {
     });
   });
 
+  const expireAtMs = computed(() => {
+    return Date.parse(expireAt.value);
+  })
+
   return {
     isAdmin,
     isSysAdmin,
@@ -50,5 +56,6 @@ export const useUserStore = defineStore('user', () => {
     roles,
     token,
     expireAt,
+    expireAtMs,
   };
 })

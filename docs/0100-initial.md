@@ -112,3 +112,7 @@ npm add -D sass
 ### IDE VSCode debug
 
 <https://vitest.dev/guide/debugging.html#vscode>
+
+## debug pinia
+
+<https://pinia.vuejs.org/cookbook/testing.html#unit-testing-a-store>

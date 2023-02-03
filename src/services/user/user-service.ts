@@ -1,3 +1,5 @@
+import type { FormLoginParam } from "@/model/dto/ums";
+
 export interface UserService {
-  postInit: () => void;
+  formLogin(data: FormLoginParam): Promise<void>;
 }

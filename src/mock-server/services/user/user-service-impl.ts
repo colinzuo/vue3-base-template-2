@@ -1,14 +1,16 @@
 import type { MockServerUserService } from "./user-service";
 import type { UmsUserBO } from "@/mock-server/model/bo";
 import { UserMapper } from "@/mock-server/mapper";
-import { defaultPageQueryParam } from '@/mock-server/common';
+import { defaultPageQueryParam, CommonError } from '@/mock-server/common';
 
 import type { CommonResult, CommonPage } from "@/model/dto/common";
-import type { UmsUserQueryParam, UmsUserDTO } from "@/model/dto/ums";
+import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData } from "@/model/dto/ums";
 
 
 export class MockServerUserServiceImpl implements MockServerUserService {
   logPrefix = 'MockServerUserServiceImpl:';
+
+  activeUserBO: UmsUserBO | null = null;
 
   userBOList: UmsUserBO[] = [
     {
@@ -21,6 +23,7 @@ export class MockServerUserServiceImpl implements MockServerUserService {
       enabled: true,
       sysAdmin: true,
       admin: false,
+      roles: ['sysAdmin', 'admin'],
     },
     {
       id: 2,
@@ -32,6 +35,7 @@ export class MockServerUserServiceImpl implements MockServerUserService {
       enabled: true,
       sysAdmin: false,
       admin: true,
+      roles: ['admin'],
     },
     {
       id: 3,
@@ -43,10 +47,11 @@ export class MockServerUserServiceImpl implements MockServerUserService {
       enabled: true,
       sysAdmin: false,
       admin: false,
+      roles: [],
     },
   ];
 
-  getUserList(params: UmsUserQueryParam = {}): CommonResult<CommonPage<UmsUserDTO>> {
+  getUserList(params: UmsUserQueryParam = {}): Promise<CommonResult<CommonPage<UmsUserDTO>>> {
     params.pageSize = params.pageSize || defaultPageQueryParam.pageSize;
     params.pageNum = params.pageNum || defaultPageQueryParam.pageNum;
 
@@ -82,6 +87,62 @@ export class MockServerUserServiceImpl implements MockServerUserService {
 
     console.log(`${this.logPrefix} params ${JSON.stringify(params, null, 2)}, result ${JSON.stringify(result, null, 2)}`)
 
-    return result;
+    return Promise.resolve(result);
+  }
+
+  formLogin(data: FormLoginParam): Promise<CommonResult<LoginResponseData>> {
+    let targetUserBO;
+
+    for (const userBO of this.userBOList) {
+      if (userBO.username === data.username) {
+        if (userBO.password === data.password) {
+          targetUserBO = userBO;
+        }
+
+        break;
+      }
+    }
+
+    this.activeUserBO = null;
+
+    if (!targetUserBO) {
+      return Promise.resolve({
+        error: CommonError.RES_UNAUTHORIZED,
+      })
+    } else {
+      this.activeUserBO = targetUserBO;
+      const expireAt = new Date(Date.now() + 24*60*60*1000).toISOString();
+
+      return Promise.resolve({
+        data: {
+          token: 'not-really-used',
+          expireAt,
+        }
+      })
+    }
+  }
+
+  getUserInfo(): Promise<CommonResult<UserInfoData>> {
+    if (!this.activeUserBO) {
+      return Promise.resolve({
+        error: CommonError.RES_UNAUTHORIZED,
+      })
+    }
+
+    const result = {
+      data: {
+        username: this.activeUserBO.username,
+        roles: this.activeUserBO.roles,
+      }
+    };
+
+    console.log(`${this.logPrefix} result ${JSON.stringify(result, null, 2)}`)
+
+    return Promise.resolve(result);
+  }
+
+  logout(): Promise<CommonResult<never>> {
+    this.activeUserBO = null;
+    return Promise.resolve({});
   }
 }
