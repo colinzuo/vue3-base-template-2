@@ -82,3 +82,33 @@ npm add -D sass
   }
 }
 ```
+
+<https://dev.to/ahmedsarhan/how-to-build-your-own-utility-framework-using-scss-25dh>
+
+添加css utility，比如spacing和display相关的
+
+## 配置vitest
+
+### tsconfig.vitest.json
+
+还是习惯使用单独的tests目录，另外使能vitest globals
+
+```json
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue",
+    "tests/**/*", "tests/**/*.vue"],
+
+    "types": ["node", "jsdom", "vitest/globals"]
+```
+
+### vite.config.ts
+
+```ts
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
+```
+
+### IDE VSCode debug
+
+<https://vitest.dev/guide/debugging.html#vscode>

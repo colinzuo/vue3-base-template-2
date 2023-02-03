@@ -1,4 +1,9 @@
-@use './base.scss' as *;
+@use './alignments';
+@use './display';
+@use './spacing';
+@use './text';
+
+@use './base.scss';
 
 #app {
   max-width: 1280px;

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+
+import { useUserStore } from './stores/user';
+
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -11,12 +15,12 @@ import HelloWorld from './components/HelloWorld.vue'
       <HelloWorld msg="You did it!" />
 
       <div>
-        <el-button>Default</el-button>
-        <el-button type="primary">Primary</el-button>
-
-        <el-icon style="margin-left: 20px"><Plus /></el-icon>
+        <span class="m-4 d-block">User Name: {{  userStore.name }}</span>
+        <el-button class="m-4">Default</el-button>
+        <el-button class="m-4" type="primary">Primary</el-button>
+        <el-icon class="m-4"><Plus /></el-icon>
       </div>
-      
+
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
