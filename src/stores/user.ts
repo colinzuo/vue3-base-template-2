@@ -1,8 +1,9 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 
 import { gStorageService } from '@/services'
 
+const logPrefix = 'userStore:';
 const userStateKey = 'userState';
 
 export interface UserState {
@@ -49,6 +50,30 @@ export const useUserStore = defineStore('user', () => {
     return Date.parse(expireAt.value);
   })
 
+  function reset() {
+    name.value = 'anonymous';
+    roles.value = [];
+    token.value = '';
+    expireAt.value = '';
+  }
+
+  function store() {
+    const curState = {
+      name: name.value,
+      roles: roles.value,
+      token: token.value,
+      expireAt: expireAt.value,
+    };
+
+    console.log(`${logPrefix} store ${JSON.stringify(curState, null, 2)}`);
+
+    gStorageService.setItem(userStateKey, curState);
+  }
+
+  watch([name, roles, token, expireAt], () => {
+    store();
+  })
+
   return {
     isAdmin,
     isSysAdmin,
@@ -57,5 +82,7 @@ export const useUserStore = defineStore('user', () => {
     token,
     expireAt,
     expireAtMs,
+    reset,
+    store,
   };
 })
