@@ -4,10 +4,14 @@ import { setActivePinia, createPinia } from 'pinia'
 import { gUserService } from '@/services/user';
 import { useUserStore } from '@/stores/user';
 
+import { gMockServerUserService } from '@/mock-server/services';
+
 
 describe('gUserService', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    setActivePinia(createPinia());
+    localStorage.clear();
+    gMockServerUserService.reset();
   })
 
   describe('formLogin', () => {
@@ -52,7 +56,7 @@ describe('gUserService', () => {
     })
   })
 
-  describe.only('logout', () => {
+  describe('logout', () => {
     it('admin', async () => {
       const userStore = useUserStore();
 

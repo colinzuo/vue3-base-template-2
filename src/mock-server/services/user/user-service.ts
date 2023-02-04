@@ -6,6 +6,7 @@ import type { UmsUserBO } from "@/mock-server/model/bo";
 export interface MockServerUserService {
   activeUserBO: UmsUserBO | null;
 
+  reset(): void;
   getUserList(params?: UmsUserQueryParam): Promise<CommonResult<CommonPage<UmsUserDTO>>>;
   formLogin(data: FormLoginParam): Promise<CommonResult<LoginResponseData>>;
   getUserInfo(): Promise<CommonResult<UserInfoData>>;

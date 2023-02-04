@@ -1,3 +1,3 @@
-import { createStorageService } from "@/services";
+import { createLocalStorageService } from "@/services";
 
-export const gMockServerStorageService = createStorageService('MockServer-');
+export const gMockServerStorageService = createLocalStorageService('MockServer-');

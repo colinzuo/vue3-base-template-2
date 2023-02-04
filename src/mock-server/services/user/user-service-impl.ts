@@ -6,50 +6,56 @@ import { defaultPageQueryParam, CommonError } from '@/mock-server/common';
 import type { CommonResult, CommonPage } from "@/model/dto/common";
 import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData } from "@/model/dto/ums";
 
+const defaultUserBOList: UmsUserBO[] = [
+  {
+    id: 1,
+    username: 'sysadmin',
+    password: '123456',
+    email: 'sysadmin@example.com',
+    note: '',
+    createTime: '2023-02-02 02:00:00T',
+    enabled: true,
+    sysAdmin: true,
+    admin: false,
+    roles: ['sysAdmin', 'admin'],
+  },
+  {
+    id: 2,
+    username: 'admin',
+    password: '123456',
+    email: 'admin@example.com',
+    note: '',
+    createTime: '2023-02-02 02:00:00T',
+    enabled: true,
+    sysAdmin: false,
+    admin: true,
+    roles: ['admin'],
+  },
+  {
+    id: 3,
+    username: 'user',
+    password: '123456',
+    email: 'user@example.com',
+    note: '',
+    createTime: '2023-02-02 02:00:00T',
+    enabled: true,
+    sysAdmin: false,
+    admin: false,
+    roles: [],
+  },
+];
 
 export class MockServerUserServiceImpl implements MockServerUserService {
   logPrefix = 'MockServerUserServiceImpl:';
 
   activeUserBO: UmsUserBO | null = null;
 
-  userBOList: UmsUserBO[] = [
-    {
-      id: 1,
-      username: 'sysadmin',
-      password: '123456',
-      email: 'sysadmin@example.com',
-      note: '',
-      createTime: '2023-02-02 02:00:00T',
-      enabled: true,
-      sysAdmin: true,
-      admin: false,
-      roles: ['sysAdmin', 'admin'],
-    },
-    {
-      id: 2,
-      username: 'admin',
-      password: '123456',
-      email: 'admin@example.com',
-      note: '',
-      createTime: '2023-02-02 02:00:00T',
-      enabled: true,
-      sysAdmin: false,
-      admin: true,
-      roles: ['admin'],
-    },
-    {
-      id: 3,
-      username: 'user',
-      password: '123456',
-      email: 'user@example.com',
-      note: '',
-      createTime: '2023-02-02 02:00:00T',
-      enabled: true,
-      sysAdmin: false,
-      admin: false,
-      roles: [],
-    },
-  ];
+  userBOList: UmsUserBO[] = [...defaultUserBOList];
+
+  reset(): void {
+    this.activeUserBO = null;
+    this.userBOList = [...defaultUserBOList];
+  }
 
   getUserList(params: UmsUserQueryParam = {}): Promise<CommonResult<CommonPage<UmsUserDTO>>> {
     params.pageSize = params.pageSize || defaultPageQueryParam.pageSize;
