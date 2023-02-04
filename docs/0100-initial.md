@@ -116,3 +116,8 @@ npm add -D sass
 ## debug pinia
 
 <https://pinia.vuejs.org/cookbook/testing.html#unit-testing-a-store>
+
+## 添加vueuse
+
+- watchDebounced: <https://vueuse.org/shared/watchDebounced/>
+
