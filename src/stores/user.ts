@@ -9,6 +9,7 @@ const userStateKey = 'userState';
 export interface UserState {
   name?: string;
   roles?: string[];
+  infoReadAt?: string;
   token?: string;
   expireAt?: string;
 }
@@ -16,6 +17,7 @@ export interface UserState {
 export const useUserStore = defineStore('user', () => {
   const name = ref('anonymous');
   const roles = ref([] as string[]);
+  const infoReadAt = ref('');
   const token = ref('');
   const expireAt = ref('');
 
@@ -29,6 +31,7 @@ export const useUserStore = defineStore('user', () => {
     } else {
       state.name != null && (name.value = state.name);
       state.roles != null && (roles.value = state.roles);
+      state.infoReadAt != null && (infoReadAt.value = state.infoReadAt);
       state.token != null && (token.value = state.token);
       state.expireAt != null && (expireAt.value = state.expireAt);
     }
@@ -53,6 +56,7 @@ export const useUserStore = defineStore('user', () => {
   function reset() {
     name.value = 'anonymous';
     roles.value = [];
+    infoReadAt.value = '';
     token.value = '';
     expireAt.value = '';
   }
@@ -61,6 +65,7 @@ export const useUserStore = defineStore('user', () => {
     const curState = {
       name: name.value,
       roles: roles.value,
+      infoReadAt: infoReadAt.value,
       token: token.value,
       expireAt: expireAt.value,
     };
@@ -79,6 +84,7 @@ export const useUserStore = defineStore('user', () => {
     isSysAdmin,
     name,
     roles,
+    infoReadAt,
     token,
     expireAt,
     expireAtMs,

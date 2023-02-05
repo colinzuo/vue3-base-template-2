@@ -63,6 +63,10 @@ npm install axios
 
 - `indent_size = 2`
 
+### 安装extention
+
+- `EditorConfig.EditorConfig`
+
 ## 添加sass
 
 <https://vitejs.dev/guide/features.html#css-pre-processors>

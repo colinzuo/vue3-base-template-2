@@ -36,6 +36,7 @@ export class UserServiceImpl implements UserService {
       this.userStore.$patch({
         name: rsp.data.username,
         roles: rsp.data.roles,
+        infoReadAt: new Date().toUTCString(),
       })
     }
 
