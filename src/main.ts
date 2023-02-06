@@ -10,6 +10,8 @@ import App from './App.vue'
 import { router } from './router'
 import './router/permission';
 
+import { setGNotificationService, ElementNotificationService } from '@/services/notification';
+
 import './styles/index.scss'
 
 const app = createApp(App)
@@ -22,5 +24,7 @@ app.use(ElementPlus)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
+
+setGNotificationService(new ElementNotificationService());
 
 app.mount('#app')

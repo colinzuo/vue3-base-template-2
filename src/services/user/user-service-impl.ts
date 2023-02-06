@@ -3,6 +3,7 @@ import type { UserService } from './user-service';
 import type { UserApi } from "@/api";
 import { gUserApi } from "@/api";
 import { useUserStore } from '@/stores/user';
+import { gNotificationService } from '../notification';
 
 import type { CommonResult } from "@/model/dto/common";
 import type { FormLoginParam, LoginResponseData, UserInfoData } from "@/model/dto/ums";
@@ -24,6 +25,8 @@ export class UserServiceImpl implements UserService {
         expireAt: rsp.data.expireAt,
         name: data.username,
       });
+    } else if (rsp.error) {
+      gNotificationService.error(rsp.error.message);
     }
 
     return rsp;
