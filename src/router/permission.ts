@@ -5,8 +5,7 @@ import { router } from './base';
 import { useUserStore } from '@/stores/user';
 import { gUserService } from '@/services/user';
 
-import getPageTitle from '@/utils/get-page-title';
-import { hasRoutePermission } from '@/utils/permission';
+import { NavigationUtils, PermissionUtils } from '@/utils';
 
 
 router.beforeEach(async (to, from, next) => {
@@ -16,7 +15,7 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start()
 
   // set page title
-  document.title = getPageTitle(to.meta.title)
+  document.title = NavigationUtils.getPageTitle(to.meta.title)
 
   const useStore = useUserStore();
 
@@ -38,7 +37,7 @@ router.beforeEach(async (to, from, next) => {
         }
       }
 
-      if (hasRoutePermission(to)) {
+      if (PermissionUtils.hasRoutePermission(to)) {
         next();
       } else {
         next({name: 'page-forbidden', replace: true});

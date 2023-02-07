@@ -1,6 +1,6 @@
 import type { CommonResult, CommonPage } from "@/model/dto/common";
 import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
-  RequestIdentificationCodeParam, UmsUserParam } from "@/model/dto/ums";
+  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam } from "@/model/dto/ums";
 
 
 export interface UserApi {
@@ -12,7 +12,7 @@ export interface UserApi {
 
   getUserRoleList(userId: any): any;
   updateUser({userId, data}: any): any;
-  updateUserPassword(data: any): any;
+  updateUserPassword(data: UpdateUserPasswordParam): Promise<CommonResult<number>>;
   updateUserRoleList({userId, data}: any): any;
 
   formLogin(data: FormLoginParam): Promise<CommonResult<LoginResponseData>>;

@@ -5,7 +5,7 @@ import { defaultPageQueryParam, CommonError } from '@/mock-server/common';
 
 import type { CommonResult, CommonPage } from "@/model/dto/common";
 import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
-  RequestIdentificationCodeParam, UmsUserParam } from "@/model/dto/ums";
+  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam } from "@/model/dto/ums";
 
 import { RandomUtils } from "@/utils";
 
@@ -62,6 +62,10 @@ export class MockServerUserServiceImpl implements MockServerUserService {
     this.activeUserBO = null;
     this.userBOList = [...defaultUserBOList];
     this.idCodeMap = new Map<string, string>;
+  }
+
+  loadUserByName(username: string): void {
+    this.activeUserBO = this.getUserBy(username, '');
   }
 
   getUserList(params: UmsUserQueryParam = {}): Promise<CommonResult<CommonPage<UmsUserDTO>>> {
@@ -152,6 +156,30 @@ export class MockServerUserServiceImpl implements MockServerUserService {
     console.log(`${this.logPrefix} result ${JSON.stringify(result, null, 2)}`)
 
     return Promise.resolve(result);
+  }
+
+  updateUserPassword(data: UpdateUserPasswordParam): Promise<CommonResult<number>> {
+    if (this.activeUserBO?.username !== data.username) {
+      console.log(`username ${data.username} not match ${this.activeUserBO?.username}`);
+
+      return Promise.resolve({
+        error: CommonError.RES_ILLEGAL_ARGUMENT,
+      });
+    }
+
+    if (this.activeUserBO.password !== data.oldPassword) {
+      console.log(`oldPassword ${data.oldPassword} not match ${this.activeUserBO.password}`);
+
+      return Promise.resolve({
+        error: CommonError.RES_ILLEGAL_ARGUMENT,
+      });
+    }
+
+    this.activeUserBO.password = data.newPassword;
+
+    return Promise.resolve({
+      data: 1,
+    });
   }
 
   logout(): Promise<CommonResult<never>> {

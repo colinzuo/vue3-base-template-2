@@ -9,6 +9,8 @@ import WrapperLayout from '@/layout/WrapperLayout.vue';
 import PageForbiddenView from '@/views/error-page/PageForbiddenView.vue';
 import PageNotFoundView from '@/views/error-page/PageNotFoundView.vue';
 
+import MainLayout from '@/layout/MainLayout.vue';
+
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,7 +55,7 @@ export const router = createRouter({
     },
     {
       path: '/main',
-      component: WrapperLayout,
+      component: MainLayout,
       redirect: '/main/home',
       meta: {
         requiresAuth: true,
