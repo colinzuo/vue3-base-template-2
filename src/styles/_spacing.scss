@@ -99,3 +99,7 @@ $spacer: 0.25rem;
     }
   }
 }
+
+.grow, .spacer {
+  flex-grow: 1 !important;
+}

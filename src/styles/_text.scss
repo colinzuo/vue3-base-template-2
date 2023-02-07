@@ -5,3 +5,7 @@ $textAlignments: ("left", "right", "center", "revert");
     text-align: #{$textAlign};
   }
 }
+
+.font-weight-bold {
+  font-weight: bold;
+}

@@ -1,8 +1,10 @@
 <template>
   <div class="full-wh">
     <el-container>
-      <el-header>
-        <span>{{ title }}</span>
+      <el-header class="auth-header">
+        <span class="header-title">{{ title }}</span>
+
+        <div class="spacer"></div>
 
         <el-button
           v-if="showSignin"
@@ -54,3 +56,15 @@ function onClickSignup() {
   router.push({name: "signup"});
 }
 </script>
+
+<style lang="scss" scoped>
+.auth-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+
+  .header-title {
+    font-weight: 500;
+  }
+}
+</style>
