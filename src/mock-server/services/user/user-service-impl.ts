@@ -4,7 +4,11 @@ import { UserMapper } from "@/mock-server/mapper";
 import { defaultPageQueryParam, CommonError } from '@/mock-server/common';
 
 import type { CommonResult, CommonPage } from "@/model/dto/common";
-import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData } from "@/model/dto/ums";
+import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
+  RequestIdentificationCodeParam, UmsUserParam } from "@/model/dto/ums";
+
+import { RandomUtils } from "@/utils";
+
 
 const defaultUserBOList: UmsUserBO[] = [
   {
@@ -51,10 +55,13 @@ export class MockServerUserServiceImpl implements MockServerUserService {
   activeUserBO: UmsUserBO | null = null;
 
   userBOList: UmsUserBO[] = [...defaultUserBOList];
+  idCodeMap = new Map<string, string>;
+  nextId = this.userBOList.length + 1;
 
   reset(): void {
     this.activeUserBO = null;
     this.userBOList = [...defaultUserBOList];
+    this.idCodeMap = new Map<string, string>;
   }
 
   getUserList(params: UmsUserQueryParam = {}): Promise<CommonResult<CommonPage<UmsUserDTO>>> {
@@ -149,6 +156,81 @@ export class MockServerUserServiceImpl implements MockServerUserService {
 
   logout(): Promise<CommonResult<never>> {
     this.activeUserBO = null;
+
     return Promise.resolve({});
+  }
+
+  requestIdCode(data: RequestIdentificationCodeParam): Promise<CommonResult<never>> {
+    const idCode = RandomUtils.numberSeq(8);
+    this.idCodeMap.set(data.email, idCode);
+
+    console.log(`email ${data.email}, idCode ${idCode}`);
+
+    return Promise.resolve({});
+  }
+
+  register(data: UmsUserParam): Promise<CommonResult<UmsUserDTO>> {
+    let existUser = this.getUserBy(data.username, '');
+
+    if (existUser) {
+      return Promise.resolve({
+        error: CommonError.RES_NAME_ALREADY_EXIST,
+      });
+    }
+
+    existUser = this.getUserBy('', data.email);
+
+    if (existUser) {
+      return Promise.resolve({
+        error: CommonError.RES_EMAIL_IN_USE,
+      });
+    }
+
+    const localCode = this.idCodeMap.get(data.email);
+
+    if (data.idCode !== localCode) {
+      return Promise.resolve({
+        error: CommonError.RES_ILLEGAL_ARGUMENT,
+      });
+    }
+
+    const newUserBO: UmsUserBO = {
+      id: this.nextId++,
+      email: data.email,
+      username: data.username,
+      note: '',
+      createTime: new Date().toISOString(),
+      enabled: true,
+      sysAdmin: false,
+      admin: false,
+      password: data.password,
+      roles: ['user'],
+    };
+
+    this.userBOList.push(newUserBO);
+
+    const userDTO = UserMapper.umsUserBOToUmsUserDTO(newUserBO);
+
+    return Promise.resolve({
+      data: userDTO,
+    });
+  }
+
+  getUserBy(username: string, email: string): UmsUserBO | null {
+    let found: UmsUserBO | null = null;
+
+    for (const userBO of this.userBOList) {
+      if (username && userBO.username === username) {
+        found = userBO;
+        break;
+      }
+
+      if (email && userBO.email === email) {
+        found = userBO;
+        break;
+      }
+    }
+
+    return found;
   }
 }

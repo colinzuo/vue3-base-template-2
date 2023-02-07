@@ -3,8 +3,8 @@ export interface UmsUserParam {
   password: string;
   email: string;
   idCode: string;
-  note: string;
-  enabled: boolean;
-  sysAdmin: boolean;
-  admin: boolean;
+  note?: string;
+  enabled?: boolean;
+  sysAdmin?: boolean;
+  admin?: boolean;
 }

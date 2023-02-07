@@ -1,4 +1,6 @@
-export interface RequestIdentificationCodeParam {
-  kind: string;
-  email?: string;
+export type RequestIdentificationCodeParam = RequestIdentificationCodeParamEmail
+
+export interface RequestIdentificationCodeParamEmail {
+  kind: 'email';
+  email: string;
 }

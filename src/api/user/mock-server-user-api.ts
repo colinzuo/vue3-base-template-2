@@ -1,6 +1,7 @@
 import type { UserApi } from "./user-api";
 import type { CommonResult, CommonPage } from "@/model/dto/common";
-import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData } from "@/model/dto/ums";
+import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
+  RequestIdentificationCodeParam, UmsUserParam } from "@/model/dto/ums";
 
 import { gMockServerUserService } from '@/mock-server/services/user';
 
@@ -52,12 +53,12 @@ export class MockServerUserApi implements UserApi {
     return gMockServerUserService.logout();
   }
 
-  register(data: any) {
-
+  register(data: UmsUserParam): Promise<CommonResult<UmsUserDTO>> {
+    return gMockServerUserService.register(data);
   }
 
-  requestIdCode(data: any) {
-
+  requestIdCode(data: RequestIdentificationCodeParam): Promise<CommonResult<never>> {
+    return gMockServerUserService.requestIdCode(data);
   }
 
   getRoleList(data: any)
