@@ -31,22 +31,31 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { useSidebarStore } from '@/stores/sidebar';
 import { useUserStore } from '@/stores/user';
+import { gUserService } from '@/services';
 
 import UpdatePasswordDialog from './UpdatePasswordDialog.vue';
 
 const updatePasswordDialogVisible = ref(false);
 
+const router = useRouter();
 const sidebarStore = useSidebarStore();
 const userStore = useUserStore();
 
-function handleCommand(command: string) {
+async function handleCommand(command: string) {
   console.log(`click on item ${command}`);
 
   if (command === 'update-password') {
     updatePasswordDialogVisible.value = true;
+  } else if (command === 'logout') {
+    try {
+      await gUserService.logout();
+    } finally {
+      router.push({name: "login"});
+    }
   }
 }
 </script>

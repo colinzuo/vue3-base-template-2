@@ -47,8 +47,11 @@ export class UserServiceImpl implements UserService {
   }
 
   async logout(): Promise<void> {
-    await this.userApi.logout();
-
-    this.userStore.reset();
+    try {
+      await this.userApi.logout();
+    }
+    finally {
+      this.userStore.reset();
+    }
   }
 }

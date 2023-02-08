@@ -45,11 +45,13 @@ const mainNavItemsActive = NavigationUtils.processNavigationItems(mainNavItemsFu
   // border-bottom: 1px solid var(--color-border);
 
   .main-right {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
   }
 
   .main-content {
-
+    flex-grow: 1;
   }
 }
 </style>
