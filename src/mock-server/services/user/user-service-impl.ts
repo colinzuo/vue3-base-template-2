@@ -5,8 +5,9 @@ import { defaultPageQueryParam, CommonError } from '@/mock-server/common';
 
 import type { CommonResult, CommonPage } from "@/model/dto/common";
 import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
-  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam } from "@/model/dto/ums";
+  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam, UmsUserUpdateParam } from "@/model/dto/ums";
 
+import { useUserStore } from "@/stores/user";
 import { RandomUtils } from "@/utils";
 
 
@@ -76,12 +77,22 @@ export class MockServerUserServiceImpl implements MockServerUserService {
     let matched = 0;
     const startNum = (params.pageNum - 1) * params.pageSize + 1;
 
+    const userStore = useUserStore();
+
     for (const userBO of this.userBOList) {
-      if (params.admin && !userBO.admin) {
+      if (userBO.sysAdmin && !userStore.isSysAdmin) {
         continue;
       }
 
-      if (params.sysAdmin && !userBO.sysAdmin) {
+      if (params.admin != null && params.admin !== userBO.admin) {
+        continue;
+      }
+
+      if (params.sysAdmin != null && params.sysAdmin !== userBO.sysAdmin) {
+        continue;
+      }
+
+      if (params.keyword && !(userBO.username.includes(params.keyword) || userBO.email.includes(params.keyword))) {
         continue;
       }
 
@@ -244,6 +255,90 @@ export class MockServerUserServiceImpl implements MockServerUserService {
     });
   }
 
+  addUser(data: UmsUserParam): Promise<CommonResult<UmsUserDTO>> {
+    let existUser = this.getUserBy(data.username, '');
+
+    if (existUser) {
+      return Promise.resolve({
+        error: CommonError.RES_NAME_ALREADY_EXIST,
+      });
+    }
+
+    existUser = this.getUserBy('', data.email);
+
+    if (existUser) {
+      return Promise.resolve({
+        error: CommonError.RES_EMAIL_IN_USE,
+      });
+    }
+
+    const newUserBO: UmsUserBO = {
+      id: this.nextId++,
+      email: data.email,
+      username: data.username,
+      note: '',
+      createTime: new Date().toISOString(),
+      enabled: true,
+      sysAdmin: false,
+      admin: false,
+      password: data.password,
+      roles: ['user'],
+    };
+
+    if (this.activeUserBO?.sysAdmin) {
+      newUserBO.sysAdmin = data.sysAdmin || false;
+      newUserBO.admin = data.admin || false;
+    }
+
+    this.userBOList.push(newUserBO);
+
+    const userDTO = UserMapper.umsUserBOToUmsUserDTO(newUserBO);
+
+    return Promise.resolve({
+      data: userDTO,
+    });
+  }
+
+  updateUser({ userId, data }: {userId: number, data: UmsUserUpdateParam}): Promise<CommonResult<number>> {
+    const existUserBO = this.getUserById(userId);
+
+    if (!existUserBO) {
+      return Promise.resolve({
+        error: CommonError.RES_ILLEGAL_ARGUMENT,
+      });
+    }
+
+    data.email && (existUserBO.email = data.email);
+    data.username && (existUserBO.username = data.username);
+    data.password && (existUserBO.password = data.password);
+    data.note && (existUserBO.note = data.note);
+    data.enabled != null && (existUserBO.enabled = data.enabled);
+
+    if (this.activeUserBO?.sysAdmin) {
+      data.sysadmin != null && (existUserBO.sysAdmin = data.sysadmin);
+      data.admin != null && (existUserBO.admin = data.admin);
+    }
+
+    return Promise.resolve({
+      data: 1,
+    });
+  }
+
+  delUser(userId: number): Promise<CommonResult<number>> {
+    const index = this.userBOList.findIndex((value) => value.id === userId);
+
+    if (index >= 0) {
+      this.userBOList.splice(index, 1);
+      return Promise.resolve({
+        data: 1,
+      });
+    }
+
+    return Promise.resolve({
+      data: 0,
+    });
+  }
+
   getUserBy(username: string, email: string): UmsUserBO | null {
     let found: UmsUserBO | null = null;
 
@@ -254,6 +349,19 @@ export class MockServerUserServiceImpl implements MockServerUserService {
       }
 
       if (email && userBO.email === email) {
+        found = userBO;
+        break;
+      }
+    }
+
+    return found;
+  }
+
+  getUserById(userId: number): UmsUserBO | null {
+    let found: UmsUserBO | null = null;
+
+    for (const userBO of this.userBOList) {
+      if (userBO.id === userId) {
         found = userBO;
         break;
       }

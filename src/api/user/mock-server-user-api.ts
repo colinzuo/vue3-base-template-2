@@ -1,7 +1,7 @@
 import type { UserApi } from "./user-api";
 import type { CommonResult, CommonPage } from "@/model/dto/common";
 import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
-  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam } from "@/model/dto/ums";
+  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam, UmsUserUpdateParam } from "@/model/dto/ums";
 
 import { gMockServerUserService } from '@/mock-server/services/user';
 
@@ -9,12 +9,12 @@ import { gMockServerUserService } from '@/mock-server/services/user';
 export class MockServerUserApi implements UserApi {
   mockServerUserService = gMockServerUserService;
 
-  addUser(data: any) {
-
+  addUser(data: UmsUserParam): Promise<CommonResult<UmsUserDTO>> {
+    return gMockServerUserService.addUser(data);
   }
 
-  delUser(userId: any) {
-
+  delUser(userId: number): Promise<CommonResult<number>> {
+    return gMockServerUserService.delUser(userId);
   }
 
   getUserBaseList(params: any) {
@@ -29,8 +29,8 @@ export class MockServerUserApi implements UserApi {
 
   }
 
-  updateUser({ userId, data }: any) {
-
+  updateUser({ userId, data }: {userId: number, data: UmsUserUpdateParam}): Promise<CommonResult<number>> {
+    return gMockServerUserService.updateUser({userId, data});
   }
 
   updateUserPassword(data: UpdateUserPasswordParam): Promise<CommonResult<number>> {

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 import AuthLayout from '@/layout/AuthLayout.vue';
 import LoginView from '@/views/auth/LoginView.vue';
@@ -10,6 +9,8 @@ import PageForbiddenView from '@/views/error-page/PageForbiddenView.vue';
 import PageNotFoundView from '@/views/error-page/PageNotFoundView.vue';
 
 import MainLayout from '@/layout/MainLayout.vue';
+import HomeView from '@/views/HomeView.vue'
+import UserManagementView from '@/views/UserManagementView.vue';
 
 
 export const router = createRouter({
@@ -66,6 +67,26 @@ export const router = createRouter({
           component: HomeView,
           name: 'home',
           meta: { title: 'Home' },
+        },
+        {
+          path: 'sys-management',
+          component: WrapperLayout,
+          redirect: 'sys-management/user-management',
+          meta: {
+            needRoles: [
+              'admin',
+            ],
+          },
+          children: [
+            {
+              path: 'user-management',
+              component: UserManagementView,
+              name: 'user-management',
+              meta: {
+                title: 'User Management',
+              },
+            },
+          ],
         },
       ]
     },

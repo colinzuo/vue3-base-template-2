@@ -1,6 +1,6 @@
 import type { CommonResult, CommonPage } from "@/model/dto/common";
 import type { UmsUserQueryParam, UmsUserDTO, FormLoginParam, LoginResponseData, UserInfoData,
-  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam } from "@/model/dto/ums";
+  RequestIdentificationCodeParam, UmsUserParam, UpdateUserPasswordParam, UmsUserUpdateParam } from "@/model/dto/ums";
 import type { UmsUserBO } from "@/mock-server/model/bo";
 
 
@@ -18,4 +18,8 @@ export interface MockServerUserService {
 
   requestIdCode(data: RequestIdentificationCodeParam): Promise<CommonResult<never>>;
   register(data: UmsUserParam): Promise<CommonResult<UmsUserDTO>>;
+
+  addUser(data: UmsUserParam): Promise<CommonResult<UmsUserDTO>>;
+  updateUser({ userId, data }: {userId: number, data: UmsUserUpdateParam}): Promise<CommonResult<number>>;
+  delUser(userId: number): Promise<CommonResult<number>>;
 }
