@@ -77,11 +77,12 @@
       <div class="spacer"></div>
       <el-pagination
         background
-        layout="total, prev, pager, next, jumper"
-        :current-page="pageNum"
-        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        v-model:current-page="pageNum"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 30]"
         :total="totalUsers"
-        @current-change="refreshUserList"
+
       ></el-pagination>
     </div>
 
@@ -109,7 +110,6 @@ import { useUserStore } from '@/stores/user';
 import { gUserApi } from '@/api';
 
 import type { UmsUserDTO, UmsUserQueryParam } from '@/model/dto/ums';
-import { fi } from 'element-plus/es/locale';
 
 
 const userStore = useUserStore();
@@ -132,6 +132,10 @@ watch([userFormDialogVisible], (value) => {
   }
 })
 
+watch([pageNum, pageSize], () => {
+  refreshUserList();
+})
+
 refreshUserList();
 
 async function refreshUserList() {
@@ -140,7 +144,10 @@ async function refreshUserList() {
   try {
     loading.value = true;
 
-    const queryParam: UmsUserQueryParam = {};
+    const queryParam: UmsUserQueryParam = {
+      pageNum: pageNum.value,
+      pageSize: pageSize.value,
+    };
 
     if (optionIsSysAdmin.value === 'Yes') {
       queryParam.sysAdmin = true;
@@ -165,6 +172,11 @@ async function refreshUserList() {
   } finally {
     loading.value= false;
   }
+}
+
+async function onPageChange(value: number) {
+  pageNum.value = value;
+  await refreshUserList();
 }
 
 async function handleEdit(index: number, row: UmsUserDTO) {

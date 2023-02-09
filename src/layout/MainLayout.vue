@@ -1,6 +1,8 @@
 <template>
   <div class="main-container">
-    <AppSidebar :nav-items="mainNavItemsActive">
+    <AppSidebar
+      :class="{collapse: sidebarStore.collapse, expand: !sidebarStore.collapse}"
+      :nav-items="mainNavItemsActive">
     </AppSidebar>
     <div class="main-right">
       <AppHeader>
@@ -13,45 +15,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-
-import { defaultSettings } from '@/settings';
+import AppHeader from '@/components/AppHeader.vue';
+import AppSidebar from '@/components/AppSidebar.vue';
 
 import { mainNavItemsFull } from '@/router';
-import { useUserStore } from '@/stores/user';
 import { useSidebarStore } from '@/stores/sidebar';
-
-import type { NavigationItem } from '@/model/bo';
-
 import { NavigationUtils } from '@/utils';
 
-import AppSidebar from '@/components/AppSidebar.vue';
-import AppHeader from '@/components/AppHeader.vue';
 
-const title = defaultSettings.title;
-const sidebar = ref(true);
-
-const userStore = useUserStore();
+const sidebarStore = useSidebarStore();
 
 const mainNavItemsActive = NavigationUtils.processNavigationItems(mainNavItemsFull);
-
 </script>
 
 <style lang="scss" scoped>
 .main-container {
   display: flex;
   height: 100%;
-  // align-items: center;
-  // border-bottom: 1px solid var(--color-border);
 
-  .main-right {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  .expand {
+    width: 250px;
   }
 
-  .main-content {
+  .collapse {
+    width: 64px;
+  }
+
+  .main-right {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    .main-content {
+      flex-grow: 1;
+      width: calc(100% - 1px);
+    }
   }
 }
 </style>
